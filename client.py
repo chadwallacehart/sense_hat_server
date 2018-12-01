@@ -5,7 +5,9 @@ from time import sleep
 logging.getLogger('socketIO-client').setLevel(logging.CRITICAL)
 logging.basicConfig()
 
+last_reading = {}
 orientation = -1
+compass = -1
 
 
 def on_connect():
@@ -21,14 +23,17 @@ def on_reconnect():
 
 
 def handle_sensor_data(*args):
-    global orientation
-    data = args[0]
+    global last_reading
+    last_reading = args[0]
 
-    # ToDo: I don't think below is working - always shows -1
+    '''
     if 'orientation' in data:
-        orientation = data['orientation']
-        # print(heading)
-
+        last_reading.orientation = data['orientation']
+    if 'compass' in data:
+        last_reading.compass = data['compass']
+    if 'compass' in data:
+        last_reading = data['compass']
+    '''
 
 def start_socket(running):
     print("starting socketIO connection")
@@ -83,7 +88,7 @@ def avg_heading(num_readings=5):
 
 # used for testing
 def main():
-    global orientation
+    global last_reading
     print("Hit Ctrl-C to exit.")
 
     try:
@@ -91,7 +96,7 @@ def main():
 
         while True:
             sleep(0.5)
-            print(orientation)
+            print(last_reading)
     except KeyboardInterrupt:
         print("exiting...")
         stop()
